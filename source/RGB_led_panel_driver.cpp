@@ -39,9 +39,29 @@
 #include "clock_config.h"
 #include "MK64F12.h"
 #include "fsl_debug_console.h"
-/* TODO: insert other include files here. */
 
-/* TODO: insert other definitions and declarations here. */
+#include "FreeRTOS.h"
+#include "task.h"
+
+#define STACK_SIZE 256
+
+void task_blink_r(void*) {
+	BOARD_LED_RED_GPIO_PORT->PCR[BOARD_LED_RED_GPIO_PIN] = PORT_PCR_MUX(kPORT_MuxAsGpio);
+	LED_RED_INIT(LOGIC_LED_ON);
+	for(;;) {
+		vTaskDelay(500/portTICK_PERIOD_MS);
+		LED_RED_TOGGLE();
+	}
+}
+
+void task_blink_b(void*) {
+	BOARD_LED_BLUE_GPIO_PORT->PCR[BOARD_LED_BLUE_GPIO_PIN] = PORT_PCR_MUX(kPORT_MuxAsGpio);
+	LED_BLUE_INIT(LOGIC_LED_ON);
+	for(;;) {
+		vTaskDelay(333/portTICK_PERIOD_MS);
+		LED_BLUE_TOGGLE();
+	}
+}
 
 /*
  * @brief   Application entry point.
@@ -55,16 +75,14 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
-    PRINTF("Hello World\n");
+    PRINTF("\nRGB led panel driver\n");
 
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
-    while(1) {
-        i++ ;
-        /* 'Dummy' NOP to allow source level single stepping of
-            tight while() loop */
-        __asm volatile ("nop");
-    }
-    return 0 ;
+    xTaskCreate(task_blink_r, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(task_blink_b, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+
+	vTaskStartScheduler();
+
+	/* Should never get here! */
+	for(;;);
+    return 0;
 }
