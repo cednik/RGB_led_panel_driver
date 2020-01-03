@@ -43,9 +43,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#define STACK_SIZE 256
+#define STACK_SIZE 1024
 
-#include "fmt/format.h"
+#include "print.hpp"
 
 void task_blink_r(void*) {
 	BOARD_LED_RED_GPIO_PORT->PCR[BOARD_LED_RED_GPIO_PIN] = PORT_PCR_MUX(kPORT_MuxAsGpio);
@@ -53,6 +53,7 @@ void task_blink_r(void*) {
 	for(;;) {
 		vTaskDelay(500/portTICK_PERIOD_MS);
 		LED_RED_TOGGLE();
+		print("red {}\n", GPIO_PinRead(BOARD_LED_RED_GPIO, BOARD_LED_RED_GPIO_PIN));
 	}
 }
 
@@ -62,14 +63,8 @@ void task_blink_b(void*) {
 	for(;;) {
 		vTaskDelay(333/portTICK_PERIOD_MS);
 		LED_BLUE_TOGGLE();
+		print("blue {}\n", GPIO_PinRead(BOARD_LED_BLUE_GPIO, BOARD_LED_BLUE_GPIO_PIN));
 	}
-}
-
-template <typename S, typename... Args>
-int print(const S& format_str, Args&&... args) {
-	fmt::memory_buffer buf;
-	fmt::format_to(buf, format_str, args...);
-	return DbgConsole_SendDataReliable(reinterpret_cast<uint8_t*>(buf.data()), buf.size());
 }
 
 /*
@@ -84,10 +79,12 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
+    //__print_mutex.init();
+
     print("\nRGB led panel driver\n\t{} {}\n", __DATE__, __TIME__);
 
-    xTaskCreate(task_blink_r, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
-	xTaskCreate(task_blink_b, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(task_blink_r, "blinkR", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(task_blink_b, "blinkB", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 
 	vTaskStartScheduler();
 
