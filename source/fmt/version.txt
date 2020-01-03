@@ -1,0 +1,7 @@
+https://github.com/fmtlib/fmt
+c85efef3126eabde097761ae080ca007ba46d926
+fmt 6.1.2
+31.12.2019
+Modification:
+	src/os.cc:173 fileno is not available for the platform
+	src/os.cc:295 fdopen is not available for the platform

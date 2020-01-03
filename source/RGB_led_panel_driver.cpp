@@ -45,6 +45,8 @@
 
 #define STACK_SIZE 256
 
+#include "fmt/format.h"
+
 void task_blink_r(void*) {
 	BOARD_LED_RED_GPIO_PORT->PCR[BOARD_LED_RED_GPIO_PIN] = PORT_PCR_MUX(kPORT_MuxAsGpio);
 	LED_RED_INIT(LOGIC_LED_ON);
@@ -63,6 +65,13 @@ void task_blink_b(void*) {
 	}
 }
 
+template <typename S, typename... Args>
+int print(const S& format_str, Args&&... args) {
+	fmt::memory_buffer buf;
+	fmt::format_to(buf, format_str, args...);
+	return DbgConsole_SendDataReliable(reinterpret_cast<uint8_t*>(buf.data()), buf.size());
+}
+
 /*
  * @brief   Application entry point.
  */
@@ -75,7 +84,7 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
-    PRINTF("\nRGB led panel driver\n");
+    print("\nRGB led panel driver\n\t{} {}\n", __DATE__, __TIME__);
 
     xTaskCreate(task_blink_r, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(task_blink_b, "blink", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);

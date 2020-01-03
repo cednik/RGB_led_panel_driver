@@ -147,6 +147,17 @@ int DbgConsole_Printf(const char *formatString, ...);
 int DbgConsole_Putchar(int ch);
 
 /*!
+ * @brief Writes unformatted output to the standard output stream.
+ *
+ * Call this function to write an unformatted output to the standard output stream.
+ *
+ * @param   ch Pointer to data to be written.
+ * @param   size Length of data to be written in bytes.
+ * @return  Returns the number of characters printed or a negative value if an error occurs.
+ */
+int DbgConsole_SendDataReliable(uint8_t *ch, size_t size);
+
+/*!
  * @brief Reads formatted data from the standard input stream.
  *
  * Call this function to read formatted data from the standard input stream.

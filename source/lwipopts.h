@@ -184,9 +184,12 @@
 #ifndef LWIP_STATS
 #define LWIP_STATS 0
 #endif
+
+
 #ifndef LWIP_PROVIDE_ERRNO
-#define LWIP_PROVIDE_ERRNO 1
+#define LWIP_PROVIDE_ERRNO 0
 #endif
+#define LWIP_ERRNO_STDINCLUDE
 
 /*
    --------------------------------------
