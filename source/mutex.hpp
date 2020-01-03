@@ -26,8 +26,6 @@ public:
     mutex() noexcept;
     ~mutex();
 
-    void init();
-
     void lock();
     bool try_lock() noexcept;
     void unlock();

@@ -79,8 +79,6 @@ int main(void) {
   	/* Init FSL debug console. */
     BOARD_InitDebugConsole();
 
-    //__print_mutex.init();
-
     print("\nRGB led panel driver\n\t{} {}\n", __DATE__, __TIME__);
 
     xTaskCreate(task_blink_r, "blinkR", STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL);

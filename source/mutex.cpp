@@ -11,10 +11,6 @@
 
 namespace std {
 
-void mutex::init() {
-	__handle = xSemaphoreCreateMutex();
-}
-
 mutex::mutex()
 	: __handle(xSemaphoreCreateMutex())
 {
